@@ -15,6 +15,17 @@ def get_loss(
         y_pred: NDArray[np.float64],
         l: int,
     ) -> float:
+    """
+    Calculate the loss between the true values and predicted values.
+
+    Parameters:
+    y (NDArray[np.float64]): True values.
+    y_pred (NDArray[np.float64]): Predicted values.
+    l (int): Order of the loss function (1 for L1, 2 for L2).
+
+    Returns:
+    float: Calculated loss.
+    """
     y_delta: NDArray[np.float64] = y - y_pred
 
     if l == 1:
