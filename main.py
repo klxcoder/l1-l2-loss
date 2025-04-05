@@ -64,18 +64,18 @@ def main():
     y2_pred = w2*x + b2
 
     # Create subplots
-    _, axes = plt.subplots(2, 2, figsize=(12, 10))
+    _, axes = plt.subplots(1, 2, figsize=(12, 6))
 
-    axes[0, 0].scatter(x, y, color='blue', label='Data points')
-    axes[0, 0].plot(x, y1_pred, color='red', label='L1 predicted line')
-    axes[0, 0].plot(x, y2_pred, color='green', label='L2 predicted line')
-    axes[0, 0].set_title('Data and predicted lines')
-    axes[0, 0].legend()
+    axes[0].scatter(x, y, color='blue', label='Data points')
+    axes[0].plot(x, y1_pred, color='red', label='L1 predicted line')
+    axes[0].plot(x, y2_pred, color='green', label='L2 predicted line')
+    axes[0].set_title('Data and predicted lines')
+    axes[0].legend()
 
-    axes[0, 1].plot(x1_loss, y1_loss, color='red', label='L1 loss')
-    axes[0, 1].plot(x2_loss, y2_loss, color='green', label='L2 loss')
-    axes[0, 1].set_title('Losses')
-    axes[0, 1].legend()
+    axes[1].plot(x1_loss, y1_loss, color='red', label='L1 loss')
+    axes[1].plot(x2_loss, y2_loss, color='green', label='L2 loss')
+    axes[1].set_title('Losses')
+    axes[1].legend()
 
     plt.show()
 
