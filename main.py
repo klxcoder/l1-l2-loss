@@ -10,17 +10,30 @@ def get_data():
     y[2] = 100  # Add an outlier
     return x, y
 
-def get_l1_loss(y: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
-    loss: float = 0
-    for i in range(len(y)):
-        loss += np.abs(y[i] - y_pred[i])
-    return loss/len(y)
+def get_loss(
+        y: NDArray[np.float64],
+        y_pred: NDArray[np.float64],
+        l: int,
+    ) -> float:
+    y_delta: NDArray[np.float64] = y - y_pred
 
-def get_l2_loss(y: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
-    loss: float = 0
-    for i in range(len(y)):
-        loss += (y[i] - y_pred[i]) ** 2
-    return loss/len(y)
+    if l == 1:
+        return np.sum(np.abs(y_delta)) / len(y)
+    if l == 2:
+        return np.sum(y_delta * y_delta) / len(y)
+    return 0
+
+def get_l1_loss(
+        y: NDArray[np.float64],
+        y_pred: NDArray[np.float64],
+    ) -> float:
+    return get_loss(y, y_pred, 1)
+
+def get_l2_loss(
+        y: NDArray[np.float64],
+        y_pred: NDArray[np.float64],
+    ) -> float:
+    return get_loss(y, y_pred, 2)
 
 def get_derivatives(
         x: NDArray[np.float64],
@@ -29,10 +42,10 @@ def get_derivatives(
         b: float,
         loss_fn: Callable[[NDArray[np.float64], NDArray[np.float64]], float],
     ):
-    small = 0.01
-    loss = loss_fn(y, w*x + b)
-    dloss_dw = (loss_fn(y, (w+small)*x + b) - loss) / small
-    dloss_db = (loss_fn(y, w*x + (b+small)) - loss) / small
+    small: float = 0.01
+    loss: float = loss_fn(y, w*x + b)
+    dloss_dw: float = (loss_fn(y, (w+small)*x + b) - loss) / small
+    dloss_db: float = (loss_fn(y, w*x + (b+small)) - loss) / small
     return dloss_dw, dloss_db, loss
 
 def get_best_fit_line(
