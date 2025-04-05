@@ -7,3 +7,6 @@
   - Formula: $L2 = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2$
   - More sensitive to outliners
   - Can be significantly affected by noisy data
+
+# Example output
+![Example output](example-output.jpeg)
