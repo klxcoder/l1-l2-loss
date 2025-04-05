@@ -27,32 +27,24 @@ def get_derivatives(
         y: NDArray[np.float64],
         w: float,
         b: float,
-        loss_fn: Callable[[NDArray[np.float64], NDArray[np.float64]], float]
+        loss_fn: Callable[[NDArray[np.float64], NDArray[np.float64]], float],
     ):
     small = 0.01
     dloss_dw = (loss_fn(y, (w+small)*x + b) - loss_fn(y, w*x + b)) / small
     dloss_db = (loss_fn(y, w*x + (b+small)) - loss_fn(y, w*x + b)) / small
     return dloss_dw, dloss_db
 
-
-def get_l1_line(x: NDArray[np.float64], y: NDArray[np.float64]):
+def get_best_fit_line(
+        x: NDArray[np.float64],
+        y: NDArray[np.float64],
+        loss_fn: Callable[[NDArray[np.float64], NDArray[np.float64]], float],
+    ):
     w = 0
     b = 0
     times = 1000
     alpha = 0.01
     for _ in range(times):
-        dloss_dw, dloss_db = get_derivatives(x, y, w, b, get_l1_loss)
-        w -= alpha * dloss_dw
-        b -= alpha * dloss_db
-    return w, b
-
-def get_l2_line(x: NDArray[np.float64], y: NDArray[np.float64]):
-    w = 0
-    b = 0
-    times = 1000
-    alpha = 0.01
-    for _ in range(times):
-        dloss_dw, dloss_db = get_derivatives(x, y, w, b, get_l2_loss)
+        dloss_dw, dloss_db = get_derivatives(x, y, w, b, loss_fn)
         w -= alpha * dloss_dw
         b -= alpha * dloss_db
     return w, b
@@ -60,10 +52,10 @@ def get_l2_line(x: NDArray[np.float64], y: NDArray[np.float64]):
 def main():
     x, y = get_data()
 
-    w1, b1 = get_l1_line(x, y)
+    w1, b1 = get_best_fit_line(x, y, get_l1_loss)
     y1_pred = w1*x + b1
 
-    w2, b2 = get_l2_line(x, y)
+    w2, b2 = get_best_fit_line(x, y, get_l2_loss)
     y2_pred = w2*x + b2
 
     # Create subplots
