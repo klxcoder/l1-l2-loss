@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
+from typing import Callable
 
 def get_data():
     np.random.seed(0)
@@ -21,14 +22,39 @@ def get_l2_loss(y: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
         loss += (y[i] - y_pred[i]) ** 2
     return loss/len(y)
 
+def get_derivatives(
+        x: NDArray[np.float64],
+        y: NDArray[np.float64],
+        w: float,
+        b: float,
+        loss_fn: Callable[[NDArray[np.float64], NDArray[np.float64]], float]
+    ):
+    small = 0.01
+    dloss_dw = (loss_fn(y, (w+small)*x + b) - loss_fn(y, w*x + b)) / small
+    dloss_db = (loss_fn(y, w*x + (b+small)) - loss_fn(y, w*x + b)) / small
+    return dloss_dw, dloss_db
+
+
 def get_l1_line(x: NDArray[np.float64], y: NDArray[np.float64]):
-    w = 2
-    b = 1
+    w = 0
+    b = 0
+    times = 1000
+    alpha = 0.01
+    for _ in range(times):
+        dloss_dw, dloss_db = get_derivatives(x, y, w, b, get_l1_loss)
+        w -= alpha * dloss_dw
+        b -= alpha * dloss_db
     return w, b
 
 def get_l2_line(x: NDArray[np.float64], y: NDArray[np.float64]):
-    w = 2
-    b = 2
+    w = 0
+    b = 0
+    times = 1000
+    alpha = 0.01
+    for _ in range(times):
+        dloss_dw, dloss_db = get_derivatives(x, y, w, b, get_l2_loss)
+        w -= alpha * dloss_dw
+        b -= alpha * dloss_db
     return w, b
 
 def main():
@@ -39,9 +65,6 @@ def main():
 
     w2, b2 = get_l2_line(x, y)
     y2_pred = w2*x + b2
-
-    print(get_l1_loss(y, y1_pred))
-    print(get_l2_loss(y, y2_pred))
 
     # Create subplots
     _, axes = plt.subplots(2, 2, figsize=(12, 10))
